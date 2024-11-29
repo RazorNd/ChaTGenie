@@ -1,0 +1,20 @@
+spring:
+  application.name: api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:/jwt_key.pub
+          jws-algorithms: RS512
+  cloud:
+    gateway:
+      routes:
+        - id: chat-genie-generate-suggestion
+          predicates:
+            - Path=/api/generate/suggestions
+          uri: ${chat-genie-url}
+          filters:
+            - AddRequestParameter=userId, {principal_name}
+
+
+chat-genie-url: http://chat-genie:8080/
