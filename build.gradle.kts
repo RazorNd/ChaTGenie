@@ -32,8 +32,27 @@ allprojects {
         }
     }
 
-    tasks.withType<Test> {
+    tasks.test {
         useJUnitPlatform()
+    }
+
+    tasks.bootBuildImage {
+        val registryUrl: String? by project
+        val registryUsername: String? by project
+        val registryPassword: String? by project
+        val imageVersion: String? by project
+
+        val domain = listOfNotNull(registryUrl, registryUsername?.lowercase(), project.name.lowercase()).joinToString("/")
+
+        imageName = "$domain:${imageVersion ?: project.version}"
+
+        docker {
+            publishRegistry {
+                url = registryUrl
+                username = registryUsername
+                password = registryPassword
+            }
+        }
     }
 
 }
