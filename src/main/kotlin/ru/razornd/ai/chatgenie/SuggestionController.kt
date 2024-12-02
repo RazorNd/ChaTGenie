@@ -1,9 +1,7 @@
 package ru.razornd.ai.chatgenie
 
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus.NO_CONTENT
+import org.springframework.web.bind.annotation.*
 
 
 @RestController
@@ -11,6 +9,19 @@ import org.springframework.web.bind.annotation.RestController
 class SuggestionController(private val service: SuggestionService) {
 
     @PostMapping
-    fun generate(@RequestBody request: GenerateRequest) = GenerateResponse(service.generateSuggestion(request) ?: "")
+    fun generate(
+        @RequestParam userId: String,
+        @RequestBody request: GenerateRequest
+    ) = TextResponse(service.generateSuggestion(userId, request) ?: "")
+
+    @GetMapping("/system-text")
+    fun getSystemText(@RequestParam userId: String) = TextResponse(service.systemText(userId))
+
+    @ResponseStatus(NO_CONTENT)
+    @PutMapping("/system-text")
+    fun updateSystemText(
+        @RequestParam userId: String,
+        @RequestBody updateText: UpdateText
+    ) = service.updateSystemText(userId, updateText.newText)
 
 }

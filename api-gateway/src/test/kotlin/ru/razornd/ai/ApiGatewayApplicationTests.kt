@@ -1,16 +1,21 @@
 package ru.razornd.ai
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @Suppress("SpringBootApplicationProperties")
-@SpringBootTest(webEnvironment = RANDOM_PORT, properties = ["chat-genie-url=http://localhost:\${wiremock.server.port}/"])
+@SpringBootTest(
+    webEnvironment = RANDOM_PORT,
+    properties = ["chat-genie-url=http://localhost:\${wiremock.server.port}/"]
+)
 @AutoConfigureWireMock(port = 0)
 class ApiGatewayApplicationTests {
 
@@ -27,16 +32,21 @@ class ApiGatewayApplicationTests {
                 "EURi-Y0nOwzIlUfi_MWD7yhM2eTkc1or3r9ro8kTtecWfrevh3Le79hPTBAtOIAfoCOksAZDBD5OzBc52m_0NJijRAg3_E0DHOUq" +
                 "2M51p8hlFmbj56Uee3lbpeu2HXqAC5HRi_t9CksHAc_dwGpun2wB2PhcyOTMUc64FrWetLdf8RkEyGF7A"
 
-    @Test
-    fun proxyApi() {
+    @ParameterizedTest
+    @CsvSource(
+        "POST, /api/generate/suggestions",
+        "GET,  /api/generate/suggestions/system-text",
+        "PUT,  /api/generate/suggestions/system-text",
+    )
+    fun proxyApi(method: String, path: String) {
         val expectedBody = """{"ok":  true}"""
         stubFor(
-            post(urlPathEqualTo("/api/generate/suggestions"))
+            request(method, urlPathEqualTo(path))
                 .willReturn(okJson(expectedBody))
         )
 
-        testClient.post()
-            .uri("/api/generate/suggestions")
+        testClient.method(HttpMethod.valueOf(method))
+            .uri(path)
             .headers { it.setBearerAuth(token) }
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""{"generate": 1}""")

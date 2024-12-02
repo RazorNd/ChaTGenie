@@ -9,8 +9,13 @@ import org.springframework.core.io.ClassPathResource
 open class ChatClientConfiguration {
 
     @Bean
-    open fun suggestionChatClient(builder: ChatClient.Builder): ChatClient {
-        return builder.defaultSystem(ClassPathResource("/prompts/suggestion.prompt.txt")).build()
+    open fun suggestionChatClient(
+        builder: ChatClient.Builder,
+        userSystemTextAdvisor: UserSystemTextAdvisor
+    ): ChatClient {
+        return builder.defaultSystem(ClassPathResource("/prompts/suggestion.prompt.txt"))
+            .defaultAdvisors(userSystemTextAdvisor)
+            .build()
     }
 
 }

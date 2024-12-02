@@ -15,4 +15,6 @@ data class GenerateRequest(val messages: Collection<Message>) {
     }
 }
 
-data class GenerateResponse(val text: String)
+data class TextResponse(val text: String)
+
+data class UpdateText(val newText: String)

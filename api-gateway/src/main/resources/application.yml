@@ -11,7 +11,7 @@ spring:
       routes:
         - id: chat-genie-generate-suggestion
           predicates:
-            - Path=/api/generate/suggestions
+            - Path=/api/generate/suggestions,/api/generate/suggestions/system-text
           uri: ${chat-genie-url}
           filters:
             - AddRequestParameter=userId, {principal_name}

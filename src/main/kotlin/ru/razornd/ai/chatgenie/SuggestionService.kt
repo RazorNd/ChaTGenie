@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service
 private val log = KotlinLogging.logger {}
 
 @Service
-class SuggestionService(private val chatClient: ChatClient) {
+class SuggestionService(private val chatClient: ChatClient, private val repository: UserSystemTextRepository) {
 
-    fun generateSuggestion(request: GenerateRequest): String? {
+    fun generateSuggestion(userId: String, request: GenerateRequest): String? {
         if (request.messages.isEmpty()) {
             log.debug { "No messages provided in the request." }
             return null
@@ -31,6 +31,7 @@ class SuggestionService(private val chatClient: ChatClient) {
 
         val content = chatClient.prompt()
             .messages(messages)
+            .advisors { it.param(UserSystemTextAdvisor.USER_ID, userId) }
             .call()
             .content()
 
@@ -41,4 +42,8 @@ class SuggestionService(private val chatClient: ChatClient) {
 
         return content
     }
+
+    fun systemText(userId: String): String = repository.getByUserId(userId)?.systemText ?: ""
+
+    fun updateSystemText(userId: String, newText: String) = repository.updateSystemText(userId, newText)
 }
