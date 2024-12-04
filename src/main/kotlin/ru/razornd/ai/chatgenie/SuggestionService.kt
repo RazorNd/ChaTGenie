@@ -19,7 +19,7 @@ class SuggestionService(private val chatClient: ChatClient, private val reposito
 
         log.atDebug {
             message = "Received generate request: ${request.messages.last().text}"
-            payload = mapOf("request" to request)
+            payload = mapOf("request" to request.toMap())
         }
 
         val messages = request.messages.map { message ->
@@ -46,4 +46,10 @@ class SuggestionService(private val chatClient: ChatClient, private val reposito
     fun systemText(userId: String): String = repository.getByUserId(userId)?.systemText ?: ""
 
     fun updateSystemText(userId: String, newText: String) = repository.updateSystemText(userId, newText)
+
+    private fun GenerateRequest.toMap(): Collection<Map<String, Any>> {
+        return messages.map { message ->
+            mapOf("type" to message.type, "text" to message.text)
+        }
+    }
 }
