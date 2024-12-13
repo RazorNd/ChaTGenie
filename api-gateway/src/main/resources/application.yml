@@ -1,3 +1,6 @@
+routes:
+  chat-genie-url: http://chat-genie:8080/
+
 spring:
   application.name: api-gateway
   security:
@@ -12,9 +15,15 @@ spring:
         - id: chat-genie-generate-suggestion
           predicates:
             - Path=/api/generate/suggestions,/api/generate/suggestions/system-text
-          uri: ${chat-genie-url}
+          uri: ${routes.chat-genie-url}
           filters:
             - AddRequestParameter=userId, {principal_name}
 
-
-chat-genie-url: http://chat-genie:8080/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}

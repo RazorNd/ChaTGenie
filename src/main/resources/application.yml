@@ -4,3 +4,12 @@ spring:
     ollama:
       chat:
         model: 'llama3.1:8b'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}

@@ -14,7 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @Suppress("SpringBootApplicationProperties")
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = ["chat-genie-url=http://localhost:\${wiremock.server.port}/"]
+    properties = ["routes.chat-genie-url=http://localhost:\${wiremock.server.port}/"]
 )
 @AutoConfigureWireMock(port = 0)
 class ApiGatewayApplicationTests {

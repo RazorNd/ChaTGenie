@@ -11,4 +11,4 @@ services:
       - POSTGRES_DB=chat-genie
       - POSTGRES_USER=chat-genie
     ports:
-      - '5432:49974'
+      - '49974:5432'
