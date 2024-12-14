@@ -52,12 +52,13 @@ jobs:
     steps:
       - name: Deploy via SSH
         id: deploy_step
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          capture_stdout: true
           script: |
             cd /opt/deployment/chat-genie
             docker compose up --pull=always --detach chat-genie api-gateway
@@ -67,10 +68,12 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
           message: |
             🎉 Deployment result:
+            ```sh
             ${{ steps.deploy_step.outputs.stdout }}
-
+            ```   
 
   dependency-submission:
     runs-on: ubuntu-latest
