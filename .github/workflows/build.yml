@@ -24,7 +24,18 @@ jobs:
         run: ./gradlew build
       - name: Build & Publish Docker Image
         run: ./gradlew bootBuildImage --publishImage -PregistryUrl=${{ env.REGISTRY }} -PregistryUsername=${{ github.actor }} -PregistryPassword=${{ secrets.GITHUB_TOKEN }} -PimageVersion=latest
-
+      - name: Send Telegram Notification
+        run: |
+          BUILD_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if [ "${{ job.status }}" == "success" ]; then
+            MESSAGE="The build was successful! View the build details here: $BUILD_URL"
+          else  
+            MESSAGE="The build failed. Please check the logs for details. View the build details here: $BUILD_URL"
+          fi
+          
+          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "'"$MESSAGE"'"}'
   dependency-submission:
     runs-on: ubuntu-latest
     permissions:
