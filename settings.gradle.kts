@@ -1,3 +1,4 @@
 rootProject.name = "ChaTGenie"
 
-include("api-gateway")
+include("applications:chat-genie")
+include("applications:api-gateway")

@@ -2,11 +2,13 @@ package ru.razornd.ai
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.config.web.server.invoke
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
 
+@EnableWebFluxSecurity
 @Configuration(proxyBeanMethods = false)
 open class SecurityConfiguration {
 
